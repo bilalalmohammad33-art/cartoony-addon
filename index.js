@@ -26,7 +26,7 @@ async function getBrowser() {
         console.log("🌐 Starting Cloud Chrome Browser...");
         browserInstance = await puppeteer.launch({ 
             headless: 'new',
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
+            executablePath: '/usr/bin/google-chrome-stable', // Uses the HuggingFace installed Chrome
             args: [
                 '--no-sandbox', 
                 '--disable-setuid-sandbox',
@@ -52,7 +52,7 @@ try {
 
 const MANIFEST = {
   id: 'community.cartoony.net',
-  version: '20.0.0', // Cloud Edition
+  version: '21.0.0', // Cloud Edition
   name: 'كرتوني Cartoony',
   description: 'مسلسلات كرتون عربية من موقع كرتوني',
   logo: `${BASE_URL}/favicon.ico`,
@@ -90,7 +90,7 @@ async function scrapeShowData(rawId) {
         const browser = await getBrowser();
         page = await browser.newPage();
         
-        // Block images to save RAM on the cloud server!
+        // Cloud Optimization: Block heavy files so it loads instantly!
         await page.setRequestInterception(true);
         page.on('request', (req) => {
             if(req.resourceType() === 'image' || req.resourceType() === 'stylesheet' || req.resourceType() === 'font') {
@@ -213,7 +213,7 @@ app.get('/stream/:type/:id.json', async (req, res) => {
         const browser = await getBrowser();
         page = await browser.newPage();
         
-        // Cloud Optimization: Block heavy files so stream loads faster!
+        // Cloud Optimization: Block heavy files
         await page.setRequestInterception(true);
         let streamUrl = null;
 
@@ -266,8 +266,8 @@ app.get('/stream/:type/:id.json', async (req, res) => {
     }
 });
 
-// The cloud server will assign its own PORT automatically
-const PORT = process.env.PORT || 7000;
+// Hugging Face ONLY allows Port 7860!
+const PORT = 7860;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n✅ Cartoony Stremio Addon is running in the Cloud on port ${PORT}!`);
 });
